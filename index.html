@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>آزمون Word 2024 — تیم هنرآموزان پیشرو</title>
+<style>
+  :root{--bg:#f7fafc;--card:#ffffff;--accent:#1f78b4;--good:#2d9f6b;--bad:#e53e3e}
+  body{font-family:Tahoma, "Helvetica Neue", Arial, sans-serif; background:var(--bg); margin:0; padding:20px; color:#111; line-height:1.6}
+  .container{max-width:980px; margin:0 auto}
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #ddd;}
+  .header-info {display: flex; align-items: center; gap: 15px;}
+  .logo-placeholder {width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555; border: 2px solid var(--accent);}
+  h1{margin:0;font-size:22px; color:var(--accent);}
+  .small-creator{font-size: 12px; color: #888; margin-top: 4px; text-align: left;}
+  .controls{display:flex;gap:12px;align-items:center; flex-wrap:wrap;}
+  input[type="number"], input[type="text"]{padding:8px 10px;border:1px solid #ccc;border-radius:6px;text-align:right; transition:border-color 0.3s;}
+  input[type="text"]:focus{border-color:var(--accent); outline:none;}
+  input[type="text"]{width:180px;}
+  button{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:6px;cursor:pointer; transition:background-color 0.3s;}
+  button:hover{background:#1a6aa1;}
+  button.secondary{background:#555;}
+  button.secondary:hover{background:#444;}
+  .card{background:var(--card);box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:20px;border-radius:10px;margin-bottom:15px; border-right:4px solid var(--accent);}
+  .small{font-size:14px;color:#555;}
+  .timer{font-size:18px;font-weight:700;color:var(--bad);}
+  .question{/* Keep default styles */}
+  .qtxt{font-size:16px;font-weight:700; color:#333; margin-bottom:12px; padding-bottom:8px; border-bottom:1px dashed #eee;}
+  .opts{margin-top:12px;display:flex;flex-direction:column;gap:10px;}
+  label.opt{display:flex;align-items:center;gap:12px;padding:10px 15px;border:1px solid #e6e6e6;border-radius:8px;cursor:pointer; transition:background-color 0.2s, border-color 0.2s;}
+  label.opt:hover{background:#f0f7ff; border-color:var(--accent);}
+  input[type="radio"]{transform:scale(1.2); accent-color:var(--accent);}
+  .footer-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+  .answer-badge{display:inline-block;padding:4px 8px;border-radius:999px;font-weight:700;font-size:12px;}
+  .badge-correct{background:var(--good);color:#fff;}
+  .badge-wrong{background:var(--bad);color:#fff;}
+
+  /* Result Area Styling */
+  #resultArea h3{color:var(--accent); font-size:20px; margin-top:0;}
+  #resultArea div strong{color:#333;}
+  #resultArea hr{border:0; border-top:1px solid #eee; margin:15px 0;}
+  #resultArea ul{list-style:none; padding-right:0;}
+  #resultArea li{margin-bottom:15px; border-right: 3px solid var(--bad); padding-right: 10px;}
+  .correct-analysis {font-size: 14px; margin-top: 5px; padding: 5px 8px; background: #f0fff0; border: 1px solid var(--good); border-radius: 4px;}
+  .correct-answer-text {color:#117d3f; font-weight: bold;}
+  .user-answer-text {color:#a00; font-weight: bold;}
+
+  /* Navigation Dots */
+  .nav-dots-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap; 
+    padding: 10px 0;
+  }
+  .nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .nav-dot.answered {
+    background: var(--good); 
+  }
+  .nav-dot.current {
+    box-shadow: 0 0 0 3px var(--accent); 
+    background: #fff;
+  }
+  .nav-dot[data-index].answered.current {
+    background: var(--good); 
+    box-shadow: 0 0 0 3px var(--accent); 
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-info">
+      <div class="logo-placeholder">هنرآموزان پیشرو</div>
+      <div>
+        <h1>آزمون مهارت Word 2024</h1>
+        <div class="small">آزمون شامل 27 سؤال — مدت زمان 20 دقیقه</div>
+        <div class="small-creator">کاری از تیم هنرآموزان پیشرو | کانال: <a href="https://t.me/sanatHooshmandPishro" target="_blank">@sanatHooshmandPishro</a></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="small">نام شما:</div>
+      <input id="nameInput" type="text" placeholder="نام و نام خانوادگی">
+      <button id="startBtn">شروع آزمون</button>
+      <div style="min-width:120px;text-align:center">
+        <div class="small">زمان باقی‌مانده</div>
+        <div class="timer" id="timerDisplay">--:--</div>
+      </div>
+    </div>
+  </header>
+
+  <section id="quizArea" style="display:none">
+    
+    <div id="globalNavDots" class="card" style="display:none;">
+      <div class="nav-dots-container"></div>
+    </div>
+
+    <form id="quizForm"></form>
+
+    <div class="footer-actions">
+      <button id="prevBtn" class="secondary" disabled>قبلی</button>
+      <button id="nextBtn" class="secondary" disabled>بعدی</button>
+      <button id="submitBtn" style="background:#2b9348">ارسال و مشاهده نتیجه</button>
+    </div>
+
+    <div id="resultArea" style="display:none" class="card"></div>
+  </section>
+
+  <footer>© 2025 — نسخه تحلیل هوشمند آزمون Word</footer>
+</div>
+
+<script>
+/* ======= داده‌ها: آرایه سؤالات تیم هنرآموزان پیشرو ======= */
+const QUESTIONS = [
+  { id: 1, q: "فرض کنید تازه نرم‌افزار Word 2024 را باز کرده‌اید و می‌خواهید برای تایپ یک گزارش جدید شروع به کار کنید. در این موقعیت، برای ایجاد سند جدید چه عملی انجام می‌دهید؟", 
+    analysis: "گزینه New در منوی File برای ایجاد یک فایل جدید استفاده می‌شود. Blank Document نیز یک سند خالی را برای شروع تایپ در اختیار می‌گذارد.",
+    options: [
+      { text: "از منوی File گزینه Print را انتخاب می‌کنید.", correct: false },
+      { text: "از زبانه Insert یک جدول درج می‌کنید.", correct: false },
+      { text: "از منوی File گزینه New را انتخاب و Blank Document را باز می‌کنید.", correct: true },
+      { text: "از زبانه View حالت Read Mode را فعال می‌کنید.", correct: false }
+    ]
+  },
+  { id: 2, q: "در حال تایپ یک متن طولانی هستید و می‌خواهید تغییراتتان از بین نرود. در این موقعیت، برای ذخیره سریع سند چه کاری انجام می‌دهید؟", 
+    analysis: "میانبر Ctrl+S پرکاربردترین و سریع‌ترین راه برای ذخیره (Save) تغییرات فعلی در یک سند است.",
+    options: [
+      { text: "از کلیدهای Ctrl+O استفاده می‌کنید.", correct: false },
+      { text: "کلیدهای Ctrl+S را فشار می‌دهید.", correct: true },
+      { text: "از گزینه Save As در منوی File استفاده می‌کنید.", correct: false },
+      { text: "کلیدهای Ctrl+N را می‌زنید.", correct: false }
+    ]
+  },
+  { id: 3, q: "می‌خواهید نسخه‌ای از فایل خود را با نام جدید یا در پوشه‌ای دیگر ذخیره کنید تا نسخه اصلی باقی بماند. در این موقعیت، از کدام گزینه استفاده می‌کنید؟", 
+    analysis: "گزینه Save As برای ذخیره سند با نام جدید یا در مکان جدید استفاده می‌شود و نسخه اصلی را دست نخورده باقی می‌گذارد.",
+    options: [
+      { text: "Open", correct: false },
+      { text: "Print", correct: false },
+      { text: "Exit", correct: false },
+      { text: "Save As", correct: true }
+    ]
+  },
+  { id: 4, q: "فرض کنید کار تایپ سندتان تمام شده و می‌خواهید نرم‌افزار Word را ببندید. در این موقعیت، از چه کلید میان‌بری استفاده می‌کنید؟", 
+    analysis: "میانبر Alt+F4 در اکثر نرم‌افزارهای ویندوز (و همچنین در Word) برای بستن برنامه استفاده می‌شود.",
+    options: [
+      { text: "Ctrl+P", correct: false },
+      { text: "Alt+F4", correct: true },
+      { text: "Ctrl+O", correct: false },
+      { text: "Ctrl+N", correct: false }
+    ]
+  },
+  { id: 5, q: "فرض کنید می‌خواهید متنی را با ظاهر زیباتر تایپ کنید و لازم است نوع فونت فارسی و انگلیسی و اندازه آن‌ها را تغییر دهید. در این موقعیت، برای باز کردن پنجره تنظیمات کامل Font چه کاری باید انجام دهید؟", 
+    analysis: "فلش کوچک در گوشه پایین سمت راست هر گروه (Group) در زبانه‌ها، اجراکننده کادر محاوره‌ای (Dialog Box Launcher) است و پنجره تنظیمات کامل آن بخش (در اینجا Font) را باز می‌کند.",
+    options: [
+      { text: "از زبانه View گزینه Zoom را انتخاب کنید.", correct: false },
+      { text: "روی دکمه Bold در نوار Home کلیک کنید.", correct: false },
+      { text: "در زبانه Home از گروه Font روی اجراکننده کادر محاوره‌ای (فلش کوچک گوشه پایین راست) کلیک کنید.", correct: true },
+      { text: "از منوی File گزینه Options را باز کنید.", correct: false }
+    ]
+  },
+  { id: 6, q: "در هنگام تایپ متن، بعد از نوشتن یک کلمه فارسی، باید کلمه‌ای انگلیسی را وارد کنید. در این موقعیت، برای تغییر زبان صفحه‌کلید از فارسی به انگلیسی چه کاری انجام می‌دهید؟", 
+    analysis: "میانبر Alt+Shift استانداردترین کلید میانبر در ویندوز برای تغییر زبان تایپ از فارسی به انگلیسی و بالعکس است.",
+    options: [
+      { text: "کلیدهای Ctrl+S را فشار می‌دهید.", correct: false },
+      { text: "از ترکیب Alt+Shift برای تغییر زبان استفاده می‌کنید.", correct: true },
+      { text: "روی گزینه Insert کلیک کرده و Symbol را انتخاب می‌کنید.", correct: false },
+      { text: "از گزینه Find برای جست‌وجوی کلمات استفاده می‌کنید.", correct: false }
+    ]
+  },
+  { id: 7, q: "در حال تایپ فهرستی از موارد هستید (مثلاً چند وظیفه یا مرحله کاری) و می‌خواهید آن‌ها را به صورت فهرست نقطه‌دار نمایش دهید. در این موقعیت، کدام روش صحیح‌تر است؟", 
+    analysis: "دکمه Bullet (فهرست نقطه‌دار) در گروه Paragraph از زبانه Home قرار دارد و وظیفه ایجاد فهرست‌های نقطه‌ای را بر عهده دارد.",
+    options: [
+      { text: "از زبانه Insert گزینه Picture را انتخاب کنید.", correct: false },
+      { text: "با زدن Enter بین خطوط، فاصله می‌گذارید تا مانند فهرست دیده شود.", correct: false },
+      { text: "از زبانه Home گروه Paragraph روی دکمه Bullet کلیک می‌کنید و نوع بولت دلخواه را انتخاب می‌کنید.", correct: true },
+      { text: "کلیدهای Ctrl+B را فشار می‌دهید تا متن بولت‌دار شود.", correct: false }
+    ]
+  },
+  { id: 8, q: "در حال تایپ گزارشی هستی و می‌خواهی جمله‌ی «کیفیت محصول بسیار مهم است» را برجسته‌تر نمایش دهی تا توجه خواننده جلب شود. در این موقعیت، برای ضخیم کردن جمله چه کاری انجام می‌دهی؟", 
+    analysis: "کلید میانبر Ctrl+B (از کلمه Bold) برای ضخیم کردن متن انتخاب شده استفاده می‌شود و پرکاربردترین راه است.",
+    options: [
+      { text: "از زبانه Insert گزینه Picture را انتخاب می‌کنی.", correct: false },
+      { text: "جمله را انتخاب کرده و کلیدهای Ctrl+B را فشار می‌دهی.", correct: true },
+      { text: "از منوی File گزینه Save As را انتخاب می‌کنی.", correct: false },
+      { text: "از زبانه Layout گزینه Margins را تغییر می‌دهی.", correct: false }
+    ]
+  },
+  { id: 9, q: "فرض کن در حال ویرایش متن هستی و می‌خواهی پاراگراف‌ها از هر دو سمت منظم و یکنواخت دیده شوند (مانند روزنامه‌ها). در این موقعیت، از کدام گزینه استفاده می‌کنی؟", 
+    analysis: "گزینه Justify (تراز از دو طرف) برای تراز کردن متن در Word به گونه‌ای استفاده می‌شود که هر دو سمت راست و چپ پاراگراف یکدست شوند.",
+    options: [
+      { text: "Center", correct: false },
+      { text: "Align Left", correct: false },
+      { text: "Justify", correct: true },
+      { text: "Align Right", correct: false }
+    ]
+  },
+  { id: 10, q: "در هنگام تایپ مقاله‌ای متوجه می‌شوی که فاصله بین خطوط بیش از حد کم است و خواندن متن سخت شده است. در این موقعیت، برای تنظیم فاصله خطوط چه کاری انجام می‌دهی؟", 
+    analysis: "ابزار Line Spacing در گروه Paragraph از زبانه Home قرار دارد و مسئول تنظیم فاصله بین خطوط (Line Spacing) و فاصله قبل و بعد پاراگراف‌ها است.",
+    options: [
+      { text: "از زبانه Insert گزینه Page Number را انتخاب می‌کنی.", correct: false },
+      { text: "از زبانه Review گزینه Track Changes را فعال می‌کنی.", correct: false },
+      { text: "از زبانه Home روی گزینه Line Spacing در گروه Paragraph کلیک می‌کنی.", correct: true },
+      { text: "کلیدهای Ctrl+L را فشار می‌دهی.", correct: false }
+    ]
+  },
+  { id: 11, q: "در هنگام ویرایش متن متوجه می‌شوی یک پاراگراف را در جای اشتباه تایپ کرده‌ای و باید آن را به بالای صفحه منتقل کنی. در این موقعیت، برای انجام سریع این کار از چه کلیدهایی استفاده می‌کنی؟", 
+    analysis: "میانبر Ctrl+X متن را از مکان فعلی می‌برد (Cut) و Ctrl+V آن را در مکان جدید می‌چسباند (Paste).",
+    options: [
+      { text: "Ctrl+C سپس Ctrl+V", correct: false },
+      { text: "Ctrl+X برای برش و سپس Ctrl+V برای چسباندن در محل جدید", correct: true },
+      { text: "Ctrl+Z برای بازگشت به عقب", correct: false },
+      { text: "Ctrl+A برای انتخاب کل متن", correct: false }
+    ]
+  },
+  { id: 12, q: "در حال آماده‌سازی گزارشی درباره «محصولات جدید» هستی و باید تصویری از رایانه را بین دو پاراگراف درج کنی، به طوری که بتوانی آن را بعداً جابه‌جا یا اندازه‌اش را تغییر دهی. در این موقعیت، کدام روش بهترین گزینه است؟", 
+    analysis: "برای درج هرگونه آبجکت (شکل، تصویر، جدول) از منابع خارجی یا داخلی Word، باید از زبانه Insert استفاده کرد و Pictures ابزار مخصوص تصاویر است.",
+    options: [
+      { text: "از زبانه Home گزینه Paste را بزن تا تصویر وارد شود.", correct: false },
+      { text: "تصویر را از روی دسکتاپ بکش و در سند رها کن.", correct: false },
+      { text: "از زبانه Insert گروه Illustrations روی Pictures کلیک کن و تصویر را انتخاب کن.", correct: true },
+      { text: "از زبانه Layout اندازه صفحه را تغییر بده تا تصویر جا بگیرد", correct: false }
+    ]
+  },
+  { id: 13, q: "در یک متن علمی نیاز داری فرمول زیر را تایپ کنی. این علامت‌ها روی صفحه‌کلید وجود ندارند. در این موقعیت، بهترین اقدام چیست؟", 
+    analysis: "ابزار Equation در زبانه Insert برای تایپ فرمول‌های پیچیده ریاضی و فیزیک استفاده می‌شود و محیطی ساختاریافته برای نوشتن علائم ریاضی را فراهم می‌کند.",
+    options: [
+      { text: "از زبانه Insert گزینه Symbol را انتخاب کرده و از More Symbols استفاده کن یا دکمه Equation را برای درج فرمول انتخاب کن.", correct: false }, 
+      { text: "(درجه سخت‌تر) ابتدا زبانه  Insert  را باز کن، سپس با انتخاب  Equation  محیط فرمول‌نویسی Word را فعال کن و فرمول را با ساختار ریاضی بنویس.", correct: true },
+      { text: "از زبانه Home گزینه Superscript را بزن.", correct: false },
+      { text: "از زبانه Design رنگ متن را تغییر بده.", correct: false }
+    ]
+  },
+  { id: 14, q: "یک سند ۲۰ صفحه‌ای داری که در آن بارها از واژه «مشکل» استفاده شده است. حال می‌خواهی همه موارد «مشکل» را به واژه «چالش» تغییر دهی، بدون اینکه یکی‌یکی آنها را پیدا کنی. در این موقعیت، چه کاری انجام می‌دهی؟", 
+    analysis: "میانبر Ctrl+H (از کلمه Replace) کادر Find and Replace را باز می‌کند. این ابزار قوی‌ترین راه برای یافتن یک کلمه و جایگزینی هم‌زمان آن با کلمه‌ای دیگر در کل سند است.",
+    options: [
+      { text: "کل سند را می‌خوانی و دستی جایگزین می‌کنی.", correct: false },
+      { text: "از کلیدهای Ctrl+F برای پیدا کردن اولین مورد استفاده می‌کنی.", correct: false },
+      { text: "از  کلیدهای Ctrl+H  استفاده می‌کنی، در کادر اول واژه‌ی «مشکل» و در کادر دوم «چالش» را می‌نویسی و گزینه  Replace All  را انتخاب می‌کنی.", correct: true },
+      { text: "با Ctrl+A همه متن را انتخاب و سپس Delete می‌زنی.", correct: false }
+    ]
+  },
+  { id: 15, q: "در متنی که تایپ کرده‌ای، متوجه می‌شوی در ابتدای بعضی پاراگراف‌ها دو فاصله اضافی وجود دارد و می‌خواهی آن‌ها را سریع حذف کنی. در این موقعیت، کدام روش کاربردی‌تر است؟", 
+    analysis: "ابزار Find and Replace (Ctrl+H) می‌تواند برای یافتن و جایگزینی الگوهای متنی خاص (مانند دو فاصله) در کل سند استفاده شود و کارآمدترین روش است.",
+    options: [
+      { text: "با ماوس تک‌تک پاراگراف‌ها را انتخاب و فاصله‌ها را پاک می‌کنی.", correct: false },
+      { text: "با زدن Ctrl+F تمام پاراگراف‌ها را جست‌وجو می‌کنی.", correct: false },
+      { text: "از  کلیدهای Ctrl+H  استفاده می‌کنی، در بخش  Find what  دو فاصله (space space) و در بخش  Replace with  یک فاصله می‌نویسی و گزینه  Replace All  را می‌زنی.", correct: true },
+      { text: "از گزینه Paragraph Spacing در زبانه Layout استفاده می‌کنی.", correct: false }
+    ]
+  },
+  { id: 16, q: "در حال آماده‌سازی خبرنامه مدرسه هستی و می‌خواهی صفحه سوم آن به شکل روزنامه‌ای و دو ستونه نمایش داده شود. در این موقعیت، برای انجام این کار چه باید بکنی؟", 
+    analysis: "تنظیم Column (ستون‌بندی) یکی از تنظیمات ساختار صفحه است و در زبانه Layout (چیدمان) قرار دارد.",
+    options: [
+      { text: "از زبانه Home گزینه Paragraph Spacing را تغییر دهی.", correct: false },
+      { text: "به زبانه  Layout  بروی و از گزینه  Columns → Two  استفاده کنی.", correct: true },
+      { text: "از زبانه Insert جدول دو ستونه درج کنی.", correct: false },
+      { text: "از زبانه View حالت Page Width را فعال کنی.", correct: false }
+    ]
+  },
+  { id: 17, q: "قبل از چاپ گزارش نهایی، می‌خواهی مطمئن شوی متن در صفحه به درستی قرار گرفته و حاشیه‌ها درست‌اند. در این موقعیت، بهترین اقدام چیست؟", 
+    analysis: "میانبر Ctrl+P (از کلمه Print) پنجره چاپ را باز می‌کند که شامل بخش Print Preview است. این بخش بهترین نما برای بررسی حاشیه‌ها و ظاهر نهایی سند قبل از چاپ است.",
+    options: [
+      { text: "از زبانه Layout اندازه صفحه را تغییر دهی.", correct: false },
+      { text: "از  کلیدهای Ctrl+P  برای باز کردن پنجره  Print Preview  استفاده کنی و تنظیمات چاپ را بررسی نمایی.", correct: true },
+      { text: "از زبانه Home رنگ متن را تغییر دهی.", correct: false },
+      { text: "با کلیک راست روی سند گزینه Save As را انتخاب کنی.", correct: false }
+    ]
+  },
+  { id: 18, q: "سرصفحه، پاصفحه و شماره‌گذاری صفحه: می‌خواهی در بالای هر صفحه نام پروژه و در پایین هر صفحه شماره صفحه درج شود، اما صفحه اول (جلد) نباید شماره داشته باشد. در این موقعیت، چه باید بکنی؟", 
+    analysis: "گزینه Different First Page یک قابلیت در بخش Header & Footer است که صفحه اول را از بقیه صفحات مجزا می‌کند و اجازه می‌دهد در آن شماره صفحه یا سرصفحه درج نشود.",
+    options: [
+      { text: "در زبانه Review گزینه Add Comment را انتخاب می‌کنی.", correct: false },
+      { text: "از زبانه  Insert  گزینه  Header & Footer  را فعال می‌کنی، گزینه  Different First Page  را در زبانه  Design  تیک می‌زنی، سپس شماره صفحه را از  Page Number  درج می‌کنی.", correct: true },
+      { text: "شماره صفحه را دستی تایپ می‌کنی.", correct: false },
+      { text: "از زبانه Layout گزینه Margins را تغییر می‌دهی.", correct: false }
+    ]
+  },
+  { id: 19, q: "در حال طراحی جلد یک جزوه هستی و می‌خواهی دور صفحه حاشیه تزئینی قرار دهی و تیتر اصلی را داخل کادری سبزرنگ با هاشور Grid نمایش دهی. در این موقعیت، کدام مسیر درست است؟", 
+    analysis: "ابزار Borders and Shading امکان تنظیم کادر دور پاراگراف‌ها، کادر دور صفحه (Page Border) و پر کردن پس‌زمینه (Shading) با رنگ یا هاشور را فراهم می‌کند.",
+    options: [
+      { text: "از زبانه Insert گزینه Picture را انتخاب می‌کنی.", correct: false },
+      { text: "از زبانه  Home  دکمه  Borders and Shading  را باز می‌کنی و در زبانه‌های  Page Border  و  Shading  نوع کادر، رنگ و طرح هاشور را تنظیم می‌کنی.", correct: true },
+      { text: "با ابزار Shapes یک مربع رسم می‌کنی و رنگ آن را تغییر می‌دهی.", correct: false },
+      { text: "از زبانه View گزینه Gridlines را فعال می‌کنی.", correct: false }
+    ]
+  },
+  { id: 20, q: "فرض کن قرار است بابت هر ۱۰۰۰ کلمه تایپ‌شده مبلغی دریافت کنی و باید بدانی سند چند کلمه دارد. در این موقعیت، بهترین و دقیق‌ترین روش چیست؟", 
+    analysis: "ابزار Word Count در زبانه Review (بازبینی) بهترین و دقیق‌ترین راه برای شمارش کلمات، خطوط، پاراگراف‌ها و صفحات در یک سند است.",
+    options: [
+      { text: "از زبانه Insert روی گزینه Symbol کلیک می‌کنی.", correct: false },
+      { text: "از زبانه  Review  روی  Word Count  کلیک می‌کنی تا تعداد کلمات، خطوط و پاراگراف‌ها را ببینی.", correct: true },
+      { text: "از زبانه Home گزینه Font Size را تغییر می‌دهی.", correct: false },
+      { text: "از منوی File گزینه Info را انتخاب می‌کنی.", correct: false }
+    ]
+  },
+  { id: 21, q: "در حال آماده‌سازی برگه‌ی «آزمون عملی» هستی و می‌خواهی عبارت \"سؤالات آزمون عملی\" به‌صورت محو، مورب و به رنگ آبی روشن در پس‌زمینه صفحات دیده شود. در این موقعیت، چه کاری انجام می‌دهی؟", 
+    analysis: "قابلیت Watermark (واترمارک) در زبانه Design (یا Page Layout در نسخه‌های قدیمی‌تر) برای درج متن یا تصویر محو و تکراری در پشت صفحات استفاده می‌شود.",
+    options: [
+      { text: "از زبانه Insert گزینه Text Box را درج کرده و رنگ متن را روشن می‌کنی.", correct: false },
+      { text: "از زبانه  Design  گزینه  Watermark → Custom Watermark  را انتخاب کرده، حالت  Text watermark  را فعال می‌کنی، رنگ و زاویه مورب را تنظیم می‌کنی.", correct: true },
+      { text: "از زبانه Home رنگ پس‌زمینه را تغییر می‌دهی.", correct: false },
+      { text: "از زبانه Layout گزینه Page Color را آبی می‌کنی.", correct: false }
+    ]
+  },
+  { id: 22, q: "در یک فرم ثبت‌نام سه‌ستونه نیاز داری دو ردیف جدید در پایین جدول اضافه کنی، سپس سلول‌های بالای جدول را با هم ادغام کنی تا عنوان کلی در وسط قرار گیرد. در این موقعیت، چه مراحلی را انجام می‌دهی؟", 
+    analysis: "گزینه‌های Insert Below (برای افزودن سطر) و Merge Cells (برای ادغام سلول‌ها) در زبانه Layout ابزار Table Tools قرار دارند و عملکردهای اساسی جدول هستند.",
+    options: [
+      { text: "جدول را حذف و دوباره ترسیم می‌کنی.", correct: false },
+      { text: "از زبانه  Layout Table  گزینه  Insert Below  برای افزودن سطر و گزینه  Merge Cells  برای ادغام سلول‌ها را انتخاب می‌کنی.", correct: true },
+      { text: "با ماوس سلول‌ها را می‌کشی و در هم می‌اندازی.", correct: false },
+      { text: "از زبانه Review ابزار Comment را فعال می‌کنی.", correct: false }
+    ]
+  },
+  { id: 23, q: "در سندی چندصفحه‌ای فقط می‌خواهی جدول درج‌شده در صفحه وسط چاپ شود و بقیه صفحات چاپ نشود. در این موقعیت، چه کار باید بکنی؟", 
+    analysis: "گزینه Print Selection در تنظیمات چاپ به شما اجازه می‌دهد فقط بخشی از سند را که انتخاب کرده‌اید (در اینجا جدول) چاپ کنید.",
+    options: [
+      { text: "متن‌های اطراف جدول را پاک کرده و کل سند را چاپ می‌کنی.", correct: false },
+      { text: "جدول را انتخاب کرده، سپس در منوی  File → Print  از قسمت  Settings  گزینه  Print Selection  را انتخاب می‌کنی.", correct: true },
+      { text: "فقط گزینه Save As PDF را انتخاب می‌کنی.", correct: false },
+      { text: "جدول را به PowerPoint منتقل می‌کنی و از آنجا چاپ می‌کنی.", correct: false }
+    ]
+  },
+  { id: 24, q: "در سند خود تصویری درج کرده‌ای اما نمی‌خواهی بخش اضافی پایین آن نمایش داده شود و می‌خواهی گوشه‌ها را گرد و سبک گرافیکی متفاوتی اعمال کنی. در این موقعیت، بهترین مسیر چیست؟", 
+    analysis: "پس از انتخاب تصویر، زبانه Format Picture فعال می‌شود. Crop برای برش زدن بخش‌هایی از تصویر و Picture Styles برای اعمال فریم‌ها و جلوه‌های گرافیکی (مانند گرد کردن گوشه‌ها) استفاده می‌شود.",
+    options: [
+      { text: "از زبانه Insert گزینه Picture را دوباره انتخاب و تصویر را جایگزین می‌کنی.", correct: false },
+      { text: "روی تصویر کلیک می‌کنی تا زبانه  Format Picture  فعال شود، سپس از گزینه  Crop  برای برش، و از  Picture Styles  برای تغییر حاشیه و شکل استفاده می‌کنی.", correct: true },
+      { text: "از زبانه View گزینه Zoom را تغییر می‌دهی.", correct: false },
+      { text: "با کلیک راست روی تصویر گزینه Hyperlink را انتخاب می‌کنی.", correct: false }
+    ]
+  },
+  { id: 25, q: "می‌خواهی در وسط صفحه، یک فلش جهت‌دار رسم کنی و درون آن بنویسی «شروع فرایند». در این موقعیت، چه کاری انجام می‌دهی؟", 
+    analysis: "ابزار Shapes (اشکال) در زبانه Insert برای رسم انواع اشکال هندسی، فلوچارت و فلش‌ها استفاده می‌شود. می‌توان مستقیماً درون این اشکال متن تایپ کرد.",
+    options: [
+      { text: "از زبانه Layout گزینه Page Border را انتخاب می‌کنی.", correct: false },
+      { text: "از زبانه  Insert → Shapes  شکل فلش را انتخاب و روی صفحه رسم می‌کنی، سپس درون آن کلیک کرده و متن را تایپ می‌کنی، در صورت نیاز با  Format Shape  رنگ و جهت آن را تغییر می‌دهی.", correct: true },
+      { text: "از زبانه Review ابزار Translate را فعال می‌کنی.", correct: false },
+      { text: "از زبانه Home ابزار Highlight را استفاده می‌کنی.", correct: false }
+    ]
+  },
+  { id: 26, q: "در حال آماده‌سازی جلد جزوه‌ای هستی و می‌خواهی عنوان «مهارت‌های دیجیتال» را به‌صورت هنری، برجسته و مورب نمایش دهی تا جذاب‌تر شود. در این موقعیت، بهترین روش چیست؟", 
+    analysis: "WordArt برای ساخت متن‌های هنری و دارای جلوه‌های بصری خاص (مانند سایه، انعکاس، مورب‌سازی و برجسته‌سازی) در Word طراحی شده است.",
+    options: [
+      { text: "فونت متن را بزرگ‌تر و رنگ آن را قرمز می‌کنی.", correct: false },
+      { text: "از زبانه  Insert → WordArt  یک سبک گرافیکی انتخاب کرده، متن را وارد می‌کنی، سپس از زبانه  Format Shape  آن را مورب و دارای جلوه سایه می‌سازی.", correct: true },
+      { text: "از زبانه Layout گزینه Page Color را تغییر می‌دهی.", correct: false },
+      { text: "از زبانه Review گزینه Add Comment را استفاده می‌کنی.", correct: false }
+    ]
+  },
+  { id: 27, q: "می‌خواهید برای یک کلمه در متن (مانند 'Word') یک توضیح یا مرجع کوتاه بیاورید که به صورت یک پاورقی در پایین صفحه ظاهر شود. در این موقعیت، کدام مسیر صحیح است؟",
+    analysis: "ابزار Insert Footnote در زبانه References برای افزودن پاورقی (Footnote) و ارجاعات در پایین صفحه استفاده می‌شود.",
+    options: [
+      { text: "از زبانه Home، گروه Font، گزینه Superscript را انتخاب می‌کنید.", correct: false },
+      { text: "از زبانه Insert، گزینه Comment را انتخاب می‌کنید.", correct: false },
+      { text: "از زبانه  References  گزینه  Insert Footnote  را انتخاب می‌کنید.", correct: true },
+      { text: "از زبانه Design، گزینه Watermark را انتخاب می‌کنید.", correct: false }
+    ]
+  }
+];
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}}
+
+let state = {timeLeft:1200, timer:null, currentIndex:0, answers:{}, questions:[], started:false, username:""};
+
+const startBtn=document.getElementById("startBtn");
+const quizArea=document.getElementById("quizArea");
+const quizForm=document.getElementById("quizForm");
+const resultArea=document.getElementById("resultArea");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
+const submitBtn=document.getElementById("submitBtn");
+const timerDisplay=document.getElementById("timerDisplay");
+const nameInput=document.getElementById("nameInput");
+const globalNavDotsContainer = document.querySelector("#globalNavDots .nav-dots-container");
+
+
+document.addEventListener("DOMContentLoaded",()=>{
+  if(localStorage.getItem("quiz_done")){
+    const code=prompt("⚠️ این آزمون قبلاً اجرا شده است. برای باز کردن دوباره، کد هنرآموزان پیشرو را وارد کنید:");
+    if(code!=="0255"){alert("کد اشتباه است. دسترسی مسدود شد.");startBtn.disabled=true;}
+  }
+});
+
+startBtn.addEventListener("click",()=>{
+  const name=nameInput.value.trim();
+  if(!name){alert("لطفاً نام خود را وارد کنید.");return;}
+  state.username=name;
+  startQuiz();
+});
+
+function startQuiz(){
+  state.questions=JSON.parse(JSON.stringify(QUESTIONS));
+  state.questions.forEach(q=>shuffle(q.options)); 
+  quizForm.innerHTML="";
+
+  createGlobalNavDots();
+
+  state.questions.forEach((q,i)=>{
+    const div=document.createElement("div");
+    div.className="card question";
+    div.style.display=i===0?"block":"none";
+    
+    let html=`<div class="qtxt">سؤال ${i+1} از ${state.questions.length}: ${q.q}</div><div class="opts">`;
+    q.options.forEach((opt,oi)=>{
+      html+=`<label class="opt"><input type="radio" name="q${q.id}" data-q="${q.id}" data-o="${oi}"><span>${opt.text}</span></label>`;
+    });
+    html+="</div>";
+    div.innerHTML=html;
+    quizForm.appendChild(div);
+  });
+  
+  quizForm.querySelectorAll("input[type=radio]").forEach(r=>{
+    r.addEventListener("change",e=>{
+      state.answers[e.target.dataset.q]=e.target.dataset.o;
+      updateGlobalNavDots(); 
+    });
+  });
+
+  quizArea.style.display="block";
+  document.getElementById("globalNavDots").style.display="block";
+  startBtn.disabled=true;
+  nameInput.disabled=true; 
+  
+  loadAnswers();
+  navigateTo(0); 
+  startTimer();
+  prevBtn.onclick=()=>navigate(-1);
+  nextBtn.onclick=()=>navigate(1);
+  submitBtn.onclick=()=>evaluate();
+}
+
+function loadAnswers() {
+    state.questions.forEach((q) => {
+        if (state.answers[q.id] !== undefined) {
+            const radio = quizForm.querySelector(`input[name="q${q.id}"][data-o="${state.answers[q.id]}"]`);
+            if (radio) {
+                radio.checked = true;
+            }
+        }
+    });
+}
+
+function createGlobalNavDots() {
+    globalNavDotsContainer.innerHTML = '';
+    state.questions.forEach((q, i) => {
+        const dot = document.createElement("span");
+        dot.className = "nav-dot";
+        dot.dataset.index = i;
+        dot.title = `سؤال ${i + 1}`;
+        dot.onclick = () => navigateTo(i);
+        globalNavDotsContainer.appendChild(dot);
+    });
+}
+
+function updateGlobalNavDots(){
+  const dots = globalNavDotsContainer.querySelectorAll(".nav-dot");
+  dots.forEach((dot, i) => {
+    dot.classList.remove("current", "answered");
+    const qId = state.questions[i].id;
+    
+    if (state.answers[qId] !== undefined) {
+        dot.classList.add("answered");
+    }
+    
+    if (i === state.currentIndex) {
+        dot.classList.add("current");
+    }
+  });
+}
+
+
+function navigate(d){
+  const newIndex = state.currentIndex + d;
+  navigateTo(newIndex);
+}
+
+function navigateTo(index){
+  const qDivs=quizForm.querySelectorAll(".question");
+  if(index < 0 || index >= state.questions.length) return;
+  
+  if(state.currentIndex >= 0 && state.currentIndex < state.questions.length) {
+     qDivs[state.currentIndex].style.display="none";
+  }
+
+  state.currentIndex=index;
+  qDivs[state.currentIndex].style.display="block";
+  
+  prevBtn.disabled=state.currentIndex===0;
+  nextBtn.disabled=state.currentIndex===state.questions.length-1;
+  
+  updateGlobalNavDots();
+}
+
+function startTimer(){
+  state.timeLeft=20*60;
+  renderTime();
+  state.timer=setInterval(()=>{
+    state.timeLeft--;
+    renderTime();
+    if(state.timeLeft<=0){clearInterval(state.timer);evaluate();}
+  },1000);
+}
+function renderTime(){
+  const m=Math.floor(state.timeLeft/60),s=state.timeLeft%60;
+  timerDisplay.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function evaluate(){
+  if(!confirm("آیا مطمئن هستید که می‌خواهید آزمون را ارسال کنید و نتیجه را ببینید؟")) return;
+
+  clearInterval(state.timer);
+  let correct=0;
+  const wrongQs=[];
+  
+  state.questions.forEach((q, i) => {
+    const userAnswerIndex = state.answers[q.id];
+    let isCorrect = false;
+
+    const correctAnswerOption = q.options.find(opt => opt.correct);
+    const analysis = q.analysis || "تحلیل در دسترس نیست.";
+    const qIndex = i + 1;
+
+    if (userAnswerIndex !== undefined) {
+      const selectedOption = q.options[userAnswerIndex];
+      if(selectedOption && selectedOption.correct){
+        isCorrect = true;
+      }
+    }
+    
+    if(isCorrect){
+      correct++;
+    } else {
+      const selectedText = userAnswerIndex !== undefined ? q.options[userAnswerIndex].text : "بدون پاسخ";
+      wrongQs.push({
+        qIndex: qIndex,
+        qText: q.q,
+        correctAnswer: correctAnswerOption ? correctAnswerOption.text : "نامشخص",
+        userAnswer: selectedText,
+        analysis: analysis
+      });
+    }
+  });
+
+  const percent=Math.round((correct/state.questions.length)*100);
+  localStorage.setItem("quiz_done","yes");
+
+  let analysisText="";
+  if(percent>=90) analysisText="**تبریک! عملکرد شما عالی است.** تسلط بسیار بالایی بر Word دارید و آماده مرحله بعد هستید.";
+  else if(percent>=70) analysisText="**عملکرد خوب.** فقط کافی است مباحث جزئی‌تر و میانبرهای مهم را کمی بیشتر تمرین کنید.";
+  else if(percent>=50) analysisText="**عملکرد متوسط.** نیاز به تمرکز بیشتر بر بخش‌های کلیدی مانند **قالب‌بندی پاراگراف، جداول و درج تصاویر** دارید.";
+  else analysisText="**نیاز به مرور پایه.** پیشنهاد می‌شود مباحث پایه مانند **ذخیره‌سازی، درج آبجکت‌ها، و تنظیمات صفحه (Layout)** را مرور کنید.";
+
+  let wrongList="";
+  if(wrongQs.length>0){
+    wrongList="<div style='margin-top:15px; padding:10px; background:#ffeeee; border:1px solid var(--bad); border-radius:6px;'><b>سؤالات نیازمند مرور (پاسخ‌های اشتباه یا بدون پاسخ):</b><ul>";
+    wrongQs.forEach((item,i)=>wrongList+=`
+      <li>
+        **سؤال ${item.qIndex}:** ${item.qText} 
+        <div style="margin-top:5px; padding-right:15px;">
+          <span class="user-answer-text">پاسخ شما: ${item.userAnswer}</span> 
+          <br>
+          <span class="correct-answer-text">پاسخ صحیح: ${item.correctAnswer}</span>
+        </div>
+        <div class="correct-analysis">**تحلیل انتخاب:** ${item.analysis}</div>
+      </li>
+    `);
+    wrongList+="</ul></div>";
+  }
+
+  // پنهان کردن فرم و نمایش نتیجه
+  quizForm.style.display = 'none';
+  document.querySelector(".footer-actions").style.display = 'none';
+  document.getElementById("globalNavDots").style.display="none"; 
+  resultArea.style.display="block";
+  resultArea.innerHTML=`
+    <h3>نتیجه آزمون مهارت Word 2024</h3>
+    <div style="font-size:16px;">**هنرآموز پیشرو:** ${state.username}</div>
+    <hr>
+    <div style="font-size:18px; color:var(--good);">تعداد پاسخ‌های صحیح: **${correct} از ${state.questions.length}**</div>
+    <div style="font-size:24px; font-weight:bold; margin:10px 0; color:var(--accent);">درصد کل: ${percent}%</div>
+    <hr>
+    <div><strong>تحلیل هوشمند:</strong> ${analysisText}</div>
+    ${wrongList}
+    <div style="margin-top:20px; text-align:center;">
+      <div style="font-size: 14px; margin-bottom: 10px; color: #888;">برای آموزش‌های بیشتر به کانال ما بپیوندید: <a href="https://t.me/sanatHooshmandPishro" target="_blank" style="color:var(--accent); font-weight: bold; text-decoration: none;">@sanatHooshmandPishro</a></div>
+      <button onclick="window.location.reload()">شروع مجدد آزمون</button>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
